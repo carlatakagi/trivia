@@ -1,11 +1,25 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { func } from 'prop-types';
+import requestToken from '../services/requestToken';
 import logo from '../trivia.png';
+import addTokens from '../redux/actions/token';
 
 class Login extends Component {
   state = {
     isDisabled: true,
     name: '',
     email: '',
+  }
+
+  getAndSaveToken = async (event) => {
+    event.preventDefault();
+    const token = await requestToken();
+    const resultToken = token.token;
+    const saveStorage = (userToken) => localStorage.setItem('token', userToken);
+    saveStorage(resultToken);
+    const { dispatch } = this.props;
+    dispatch(addTokens(resultToken));
   }
 
   handleChange = ({ target }) => {
@@ -66,7 +80,7 @@ class Login extends Component {
               type="submit"
               data-testid="btn-play"
               disabled={ isDisabled }
-              onClick={ this.validateLogin }
+              onClick={ this.getAndSaveToken }
             >
               Play
             </button>
@@ -78,4 +92,8 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default connect(null)(Login);
+
+Login.propTypes = {
+  dispatch: func.isRequired,
+};
