@@ -1,20 +1,44 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { FcSettings } from 'react-icons/fc';
+import { BsPlayBtn } from 'react-icons/bs';
+import requestToken from '../services/requestToken';
+
 import logo from '../trivia.png';
+import addTokens from '../redux/actions/token';
 
 class Login extends Component {
   state = {
     isDisabled: true,
     name: '',
     email: '',
+  };
+
+  handleClick = () => {
+    const { history } = this.props;
+    history.push('/settings');
+  } ;
+
+  getAndSaveToken = async (event) => {
+    event.preventDefault();
+    const token = await requestToken();
+    const resultToken = token.token;
+    const saveStorage = (userToken) => localStorage.setItem('token', userToken);
+    saveStorage(resultToken);
+    const { dispatch } = this.props;
+    dispatch(addTokens(resultToken));
   }
 
   handleChange = ({ target }) => {
     const { name, value } = target;
-    this.setState({
-      [name]: value,
-    },
-    this.validateLogin());
-  }
+    this.setState(
+      {
+        [name]: value,
+      },
+      this.validateLogin(),
+    );
+  };
 
   validateLogin() {
     const { email, name } = this.state;
@@ -66,16 +90,29 @@ class Login extends Component {
               type="submit"
               data-testid="btn-play"
               disabled={ isDisabled }
-              onClick={ this.validateLogin }
+              onClick={ this.getAndSaveToken }
             >
-              Play
+              <BsPlayBtn size={ 30 } />
+            </button>
+            <button
+              onClick={ this.handleClick }
+              data-testid="btn-settings"
+              type="button"
+            >
+              <FcSettings size={ 30 } />
             </button>
           </form>
         </header>
-
       </div>
     );
   }
 }
 
-export default Login;
+Login.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+export default connect()(Login);
