@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { func } from 'prop-types';
 import requestToken from '../services/requestToken';
+import PropTypes from 'prop-types';
+import { FcSettings } from 'react-icons/fc';
+import { BsPlayBtn } from 'react-icons/bs';
+
 import logo from '../trivia.png';
 import addTokens from '../redux/actions/token';
 
@@ -10,7 +14,12 @@ class Login extends Component {
     isDisabled: true,
     name: '',
     email: '',
-  }
+  };
+
+  handleClick = () => {
+    const { history } = this.props;
+    history.push('/settings');
+  } ;
 
   getAndSaveToken = async (event) => {
     event.preventDefault();
@@ -24,11 +33,13 @@ class Login extends Component {
 
   handleChange = ({ target }) => {
     const { name, value } = target;
-    this.setState({
-      [name]: value,
-    },
-    this.validateLogin());
-  }
+    this.setState(
+      {
+        [name]: value,
+      },
+      this.validateLogin(),
+    );
+  };
 
   validateLogin() {
     const { email, name } = this.state;
@@ -82,18 +93,27 @@ class Login extends Component {
               disabled={ isDisabled }
               onClick={ this.getAndSaveToken }
             >
-              Play
+              <BsPlayBtn size={ 30 } />
+            </button>
+            <button
+              onClick={ this.handleClick }
+              data-testid="btn-settings"
+              type="button"
+            >
+              <FcSettings size={ 30 } />
             </button>
           </form>
         </header>
-
       </div>
     );
   }
 }
 
-export default connect(null)(Login);
-
 Login.propTypes = {
   dispatch: func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
+
+export default connect()(Login);
