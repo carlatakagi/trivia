@@ -6,6 +6,7 @@ import { BsPlayBtn } from 'react-icons/bs';
 import requestToken from '../services/requestToken';
 import logo from '../trivia.png';
 import addTokens from '../redux/actions/token';
+import addplayers from '../redux/actions/players';
 
 class Login extends Component {
   state = {
@@ -20,6 +21,7 @@ class Login extends Component {
   } ;
 
   getAndSaveToken = async (event) => {
+    const { history } = this.props;
     event.preventDefault();
     const token = await requestToken();
     const resultToken = token.token;
@@ -27,6 +29,8 @@ class Login extends Component {
     saveStorage(resultToken);
     const { dispatch } = this.props;
     dispatch(addTokens(resultToken));
+    dispatch(addplayers(this.state));
+    history.push('/game');
   }
 
   handleChange = ({ target }) => {
