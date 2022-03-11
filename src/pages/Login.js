@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes, { func } from 'prop-types';
-
 import { AiFillSetting } from 'react-icons/ai';
+import PropTypes from 'prop-types';
 import { BsPlayBtn } from 'react-icons/bs';
 import requestToken from '../services/requestToken';
-
 import logo from '../trivia.png';
 import addTokens from '../redux/actions/token';
 
@@ -112,7 +110,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  dispatch: func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
