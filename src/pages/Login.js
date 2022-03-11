@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { func } from 'prop-types';
+import requestToken from '../services/requestToken';
+import PropTypes from 'prop-types';
 import { FcSettings } from 'react-icons/fc';
 import { BsPlayBtn } from 'react-icons/bs';
+
 import logo from '../trivia.png';
+import addTokens from '../redux/actions/token';
 
 class Login extends Component {
   state = {
@@ -17,6 +20,16 @@ class Login extends Component {
     const { history } = this.props;
     history.push('/settings');
   } ;
+
+  getAndSaveToken = async (event) => {
+    event.preventDefault();
+    const token = await requestToken();
+    const resultToken = token.token;
+    const saveStorage = (userToken) => localStorage.setItem('token', userToken);
+    saveStorage(resultToken);
+    const { dispatch } = this.props;
+    dispatch(addTokens(resultToken));
+  }
 
   handleChange = ({ target }) => {
     const { name, value } = target;
@@ -78,7 +91,7 @@ class Login extends Component {
               type="submit"
               data-testid="btn-play"
               disabled={ isDisabled }
-              onClick={ this.validateLogin }
+              onClick={ this.getAndSaveToken }
             >
               <BsPlayBtn size={ 30 } />
             </button>
@@ -97,6 +110,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
+  dispatch: func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
