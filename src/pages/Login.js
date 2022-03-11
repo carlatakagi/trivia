@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { func } from 'prop-types';
-import requestToken from '../services/requestToken';
 import PropTypes from 'prop-types';
 import { FcSettings } from 'react-icons/fc';
 import { BsPlayBtn } from 'react-icons/bs';
+import requestToken from '../services/requestToken';
 
 import logo from '../trivia.png';
 import addTokens from '../redux/actions/token';
@@ -110,7 +109,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  dispatch: func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
