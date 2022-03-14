@@ -10,29 +10,27 @@ class Game extends Component {
   state = {
     apiResult: [],
     numberQuestion: 0,
+    question: [],
+    correctQuestion: [],
+    answer: [],
   }
 
-  componentDidMount() {
-    this.getQuestion();
+  async componentDidMount() {
+    await this.getQuestion();
+    await this.nextQuestion();
   }
 
   nextQuestion = () => {
     const { apiResult, numberQuestion } = this.state;
     const select = apiResult[numberQuestion];
-    this.setState({ numberQuestion: numberQuestion + 1 });
-    console.log(apiResult, select);
+    this.setState({
+      numberQuestion: numberQuestion + 1,
+      question: select,
+      answer: this.randomArray([...select.incorrect_answers, select.correct_answer]),
+      correctQuestion: select.correct_answer,
+    });
+    console.log(select.correct_answer);
   };
-
-  /* getQuestion = async () => {
-    const { token, dispatch } = this.props;
-    const result = await requestQuestion(token);
-    const NUMBER = 3;
-    if (result.response_code === NUMBER) {
-      const { results } = await requestToken();
-      dispatch(addTokens(results));
-    }
-    this.setState({ apiResult: result.results });
-  }; */
 
   getQuestion = async () => {
     const { token, dispatch } = this.props;
@@ -50,30 +48,41 @@ class Game extends Component {
     this.setState({ apiResult: responseQuestion.results });
   };
 
+  correctQuestion = (item) => {
+    const { correctQuestion, numberQuestion } = this.state;
+    const test = item === correctQuestion
+      ? 'correct-answer'
+      : `wrong-answer-${numberQuestion}`;
+    return test;
+  }
+
+  // Função para randomizar array
+  randomArray(arr) {
+    for (let i = arr.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 2));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
   render() {
-    const { apiResult } = this.state;
-    console.log(apiResult);
+    const { question, answer } = this.state;
     return (
       <div>
         <HeaderGame />
-
-        <div>
-          {apiResult.map((answer, index) => (
-            <div key="answer">
-              <h2 data-testid="question-category">{ answer.category }</h2>
-              <h3 data-testid="question-text">{answer.question}</h3>
-
-              <button
-                type="button"
-                data-testid={ `wrong-answer-${index}` }
-              >
-                {answer.incorrect_answers}
-              </button>
-            </div>
+        <h2 data-testid="question-category">{ question.category }</h2>
+        <h3 data-testid="question-text">{question.question}</h3>
+        <span data-testid="answer-options">
+          {answer.map((item, index) => (
+            <button
+              key={ index }
+              type="button"
+              data-testid={ this.correctQuestion(item) }
+            >
+              {item}
+            </button>
           ))}
-          ;
-        </div>
-
+        </span>
         <button type="button" onClick={ this.nextQuestion }> Next </button>
       </div>
     );
