@@ -10,41 +10,106 @@ class Game extends Component {
   state = {
     apiResult: [],
     numberQuestion: 0,
+    question: [],
+    correctQuestion: [],
+    answer: [],
   }
 
-  componentDidMount() {
-    this.getQuestion();
+  async componentDidMount() {
+    await this.getQuestion();
+    await this.nextQuestion();
   }
 
   nextQuestion = () => {
     const { apiResult, numberQuestion } = this.state;
     const select = apiResult[numberQuestion];
-    this.setState({ numberQuestion: numberQuestion + 1 });
-    console.log(apiResult, select);
+    this.setState({
+      numberQuestion: numberQuestion + 1,
+      question: select,
+      answer: this.randomArray([...select.incorrect_answers, select.correct_answer]),
+      correctQuestion: select.correct_answer,
+    });
+    this.removeBorder();
   };
 
   getQuestion = async () => {
     const { token, dispatch } = this.props;
-    const result = await requestQuestion(token);
+    let responseQuestion = await requestQuestion(token);
     const NUMBER = 3;
-    if (result.response_code === NUMBER) {
-      const { results } = await requestToken();
-      dispatch(addTokens(results));
+
+    // o erro era que nao existe a chave results e o retorno era undefined
+    if (responseQuestion.response_code === NUMBER) {
+      const responseToken = await requestToken();
+
+      dispatch(addTokens(responseToken.token));
+      responseQuestion = await requestQuestion(responseToken.token);
     }
-    this.setState({ apiResult: result.results });
+
+    this.setState({ apiResult: responseQuestion.results });
   };
 
+  correctQuestion = (item) => {
+    const { correctQuestion, numberQuestion } = this.state;
+    const test = item === correctQuestion
+      ? 'correct-answer'
+      : `wrong-answer-${numberQuestion}`;
+    return test;
+  }
+
+  classQuestion = (item) => {
+    const { correctQuestion } = this.state;
+    const test = item === correctQuestion
+      ? 'correct-question'
+      : 'incorrect-question';
+    return test;
+  };
+
+  addBorder = () => {
+    const correctQuestion = document.querySelector('.correct-question');
+    const incorrectQuestion = document.querySelectorAll('.incorrect-question');
+    console.log('add');
+    correctQuestion.classList.add('correct');
+    incorrectQuestion.forEach((el) => el.classList.add('incorrect'));
+  }
+
+  removeBorder = () => {
+    const correctQuestion = document.querySelector('.correct-question');
+    const incorrectQuestion = document.querySelectorAll('.incorrect-question');
+    console.log('remove');
+    correctQuestion.classList.remove('correct');
+    incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
+  }
+
+  // Função para randomizar array
+  randomArray(arr) {
+    for (let i = arr.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 2));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
   render() {
-    const { apiResult } = this.state;
+    const { question, answer } = this.state;
     return (
       <div>
-        <p>
-          {/* {apiResult.map((el) => {
-          })} */}
-          ;
-        </p>
-        <button type="button" onClick={ this.nextQuestion }> Next </button>
         <HeaderGame />
+        <h2 data-testid="question-category">{ question.category }</h2>
+        <h3 data-testid="question-text">{question.question}</h3>
+        <span data-testid="answer-options">
+          {answer.map((item, index) => (
+            <button
+              key={ index }
+              type="button"
+              data-testid={ this.correctQuestion(item) }
+              className={ this.classQuestion(item) }
+              onClick={ this.addBorder }
+            >
+              {item}
+            </button>
+          ))}
+        </span>
+        <button type="button" onClick={ this.nextQuestion }> Next </button>
       </div>
     );
   }
