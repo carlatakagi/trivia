@@ -29,7 +29,7 @@ class Game extends Component {
       answer: this.randomArray([...select.incorrect_answers, select.correct_answer]),
       correctQuestion: select.correct_answer,
     });
-    console.log(select.correct_answer);
+    this.removeBorder();
   };
 
   getQuestion = async () => {
@@ -56,6 +56,30 @@ class Game extends Component {
     return test;
   }
 
+  classQuestion = (item) => {
+    const { correctQuestion } = this.state;
+    const test = item === correctQuestion
+      ? 'correct-question'
+      : 'incorrect-question';
+    return test;
+  };
+
+  addBorder = () => {
+    const correctQuestion = document.querySelector('.correct-question');
+    const incorrectQuestion = document.querySelectorAll('.incorrect-question');
+    console.log('add');
+    correctQuestion.classList.add('correct');
+    incorrectQuestion.forEach((el) => el.classList.add('incorrect'));
+  }
+
+  removeBorder = () => {
+    const correctQuestion = document.querySelector('.correct-question');
+    const incorrectQuestion = document.querySelectorAll('.incorrect-question');
+    console.log('remove');
+    correctQuestion.classList.remove('correct');
+    incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
+  }
+
   // Função para randomizar array
   randomArray(arr) {
     for (let i = arr.length - 1; i > 0; i -= 1) {
@@ -78,6 +102,8 @@ class Game extends Component {
               key={ index }
               type="button"
               data-testid={ this.correctQuestion(item) }
+              className={ this.classQuestion(item) }
+              onClick={ this.addBorder }
             >
               {item}
             </button>
