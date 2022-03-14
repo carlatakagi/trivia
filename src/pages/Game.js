@@ -23,7 +23,7 @@ class Game extends Component {
     console.log(apiResult, select);
   };
 
-  getQuestion = async () => {
+  /* getQuestion = async () => {
     const { token, dispatch } = this.props;
     const result = await requestQuestion(token);
     const NUMBER = 3;
@@ -32,20 +32,49 @@ class Game extends Component {
       dispatch(addTokens(results));
     }
     this.setState({ apiResult: result.results });
+  }; */
+
+  getQuestion = async () => {
+    const { token, dispatch } = this.props;
+    let responseQuestion = await requestQuestion(token);
+    const NUMBER = 3;
+
+    // o erro era que nao existe a chave results e o retorno era undefined
+    if (responseQuestion.response_code === NUMBER) {
+      const responseToken = await requestToken();
+
+      dispatch(addTokens(responseToken.token));
+      responseQuestion = await requestQuestion(responseToken.token);
+    }
+
+    this.setState({ apiResult: responseQuestion.results });
   };
 
   render() {
     const { apiResult } = this.state;
+    console.log(apiResult);
     return (
       <div>
-        <p>
-          {/* {apiResult.map((el) => {
-
-          })} */}
-          ;
-        </p>
-        <button type="button" onClick={ this.nextQuestion }> Next </button>
         <HeaderGame />
+
+        <div>
+          {apiResult.map((answer, index) => (
+            <div key="answer">
+              <h2 data-testid="question-category">{ answer.category }</h2>
+              <h3 data-testid="question-text">{answer.question}</h3>
+
+              <button
+                type="button"
+                data-testid={ `wrong-answer-${index}` }
+              >
+                {answer.incorrect_answers}
+              </button>
+            </div>
+          ))}
+          ;
+        </div>
+
+        <button type="button" onClick={ this.nextQuestion }> Next </button>
       </div>
     );
   }
