@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { func, string } from 'prop-types';
+import { func, string, number } from 'prop-types';
 import { connect } from 'react-redux';
 import HeaderGame from '../components/HeaderGame';
 import requestQuestion from '../services/requestQuestion';
 import requestToken from '../services/requestToken';
 import addTokens from '../redux/actions/token';
+import { addScore } from '../redux/actions/players';
 
 class Game extends Component {
   state = {
@@ -13,6 +14,8 @@ class Game extends Component {
     question: [],
     correctQuestion: [],
     answer: [],
+    score: 0,
+    timer: 0,
   }
 
   async componentDidMount() {
@@ -64,12 +67,13 @@ class Game extends Component {
     return test;
   };
 
-  addBorder = () => {
+  addBorder = ({ target }) => {
     const correctQuestion = document.querySelector('.correct-question');
     const incorrectQuestion = document.querySelectorAll('.incorrect-question');
-    console.log('add');
+
     correctQuestion.classList.add('correct');
     incorrectQuestion.forEach((el) => el.classList.add('incorrect'));
+    this.calculateScore(target.classList[1]);
   }
 
   removeBorder = () => {
@@ -78,6 +82,52 @@ class Game extends Component {
     console.log('remove');
     correctQuestion.classList.remove('correct');
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
+  }
+
+  // funcao para calcular a pontuacao
+  // 10 + (timer * dificuldade)
+  // hard: 3, medium: 2, easy: 1
+  calculateScore = (classQuestion) => {
+    const { score = 0, question, timer } = this.state;
+
+    const TEN = 10;
+    const EASY = 1;
+    const MEDIUM = 2;
+    const HARD = 3;
+
+    console.log(question.difficulty);
+
+    if (classQuestion === 'correct-question') {
+      if (question.difficulty === 'hard') {
+        const scorePoints = Number(TEN + (timer * HARD));
+        return Number(scorePoints);
+      } if (question.difficulty === 'medium') {
+        const scorePoints = Number(TEN + (timer * MEDIUM));
+        return Number(scorePoints);
+      }
+      const scorePoints = Number(TEN + (timer * EASY));
+      return Number(scorePoints);
+    }
+
+    this.setState((previousState, propState) => ({
+      ...previousState,
+      score: previousState.score + propState.scorePoints,
+    }), this.saveScore());
+
+    console.log(score);
+  }
+
+  // salva o score no storage
+  saveScore() {
+    const { dispatch } = this.props;
+    const { score } = this.state;
+
+    const saveScoreToStorage = (scorePlayer) => {
+      localStorage.setItem('score', scorePlayer);
+    };
+
+    saveScoreToStorage(score);
+    dispatch(addScore(score));
   }
 
   // Função para randomizar array
@@ -91,6 +141,7 @@ class Game extends Component {
 
   render() {
     const { question, answer } = this.state;
+
     return (
       <div>
         <HeaderGame />
@@ -115,13 +166,14 @@ class Game extends Component {
   }
 }
 
+Game.propTypes = {
+  dispatch: func.isRequired,
+  token: string.isRequired,
+  scorePoints: number.isRequired,
+};
+
 const mapStateToProps = (state) => ({
   token: state.token,
 });
-
-Game.propTypes = {
-  token: string.isRequired,
-  dispatch: func.isRequired,
-};
 
 export default connect(mapStateToProps, null)(Game);
