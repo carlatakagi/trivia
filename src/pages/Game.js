@@ -98,7 +98,7 @@ class Game extends Component {
     console.log(question.difficulty);
     console.log(classQuestion);
 
-    if (classQuestion === 'correct') {
+    if (classQuestion === 'correct-question') {
       if (question.difficulty === 'hard') {
         const scorePoints = Number(TEN + (timer * HARD));
         return Number(scorePoints);
@@ -119,13 +119,13 @@ class Game extends Component {
   }
 
   // salva o score no storage
-  saveScore() {
+  saveScore = () => {
     const { dispatch } = this.props;
     const { score } = this.state;
-
     const saveScoreToStorage = (scorePlayer) => {
       localStorage.setItem('score', scorePlayer);
     };
+    console.log(score);
 
     saveScoreToStorage(score);
     dispatch(addScore(score));
