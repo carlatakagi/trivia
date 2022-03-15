@@ -2,9 +2,9 @@ import {
   USER_PLAYER,
 } from './index';
 
-const players = (player) => ({
+const addplayers = (player) => ({
   type: USER_PLAYER,
   payload: player,
 });
 
-export default players;
+export default addplayers;
