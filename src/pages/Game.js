@@ -88,7 +88,7 @@ class Game extends Component {
   // 10 + (timer * dificuldade)
   // hard: 3, medium: 2, easy: 1
   calculateScore = (classQuestion) => {
-    const { score = 0, question, timer } = this.state;
+    const { score = 0, question, timer = 0 } = this.state;
 
     const TEN = 10;
     const EASY = 1;
@@ -96,8 +96,9 @@ class Game extends Component {
     const HARD = 3;
 
     console.log(question.difficulty);
+    console.log(classQuestion);
 
-    if (classQuestion === 'correct-question') {
+    if (classQuestion === 'correct') {
       if (question.difficulty === 'hard') {
         const scorePoints = Number(TEN + (timer * HARD));
         return Number(scorePoints);
@@ -111,7 +112,7 @@ class Game extends Component {
 
     this.setState((previousState, propState) => ({
       ...previousState,
-      score: previousState.score + propState.scorePoints,
+      score: Number(previousState.score) + Number(propState.scorePoints),
     }), this.saveScore());
 
     console.log(score);
