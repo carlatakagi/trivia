@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes, { func } from 'prop-types';
+import PropTypes from 'prop-types';
 
 import { AiFillSetting } from 'react-icons/ai';
 import { BsPlayBtn } from 'react-icons/bs';
@@ -8,6 +8,7 @@ import requestToken from '../services/requestToken';
 
 import logo from '../trivia.png';
 import addTokens from '../redux/actions/token';
+import addplayers from '../redux/actions/players';
 
 class Login extends Component {
   state = {
@@ -22,6 +23,7 @@ class Login extends Component {
   } ;
 
   getAndSaveToken = async (event) => {
+    const { history } = this.props;
     event.preventDefault();
     const token = await requestToken();
     const resultToken = token.token;
@@ -29,6 +31,8 @@ class Login extends Component {
     saveStorage(resultToken);
     const { dispatch } = this.props;
     dispatch(addTokens(resultToken));
+    dispatch(addplayers(this.state));
+    history.push('/game');
   }
 
   handleChange = ({ target }) => {
@@ -112,7 +116,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  dispatch: func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
