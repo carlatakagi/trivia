@@ -5,7 +5,8 @@ import HeaderGame from '../components/HeaderGame';
 import requestQuestion from '../services/requestQuestion';
 import requestToken from '../services/requestToken';
 import addTokens from '../redux/actions/token';
-// import actionTimer from '../redux/actions/timer';
+import { addScore } from '../redux/actions/players';
+
 
 class Game extends Component {
   state = {
@@ -14,6 +15,8 @@ class Game extends Component {
     question: [],
     correctQuestion: [],
     answer: [],
+    score: 0,
+    timer: [],
     seconds: 30,
     isDisabled: false,
   };
@@ -31,7 +34,6 @@ class Game extends Component {
     if (seconds === TIME_LIMIT && !isDisabled) {
       this.disabledButton();
     }
-
   }
 
    disabledButton = () => {
@@ -49,8 +51,11 @@ class Game extends Component {
   nextQuestion = () => {
     const { apiResult, numberQuestion } = this.state;
     const select = apiResult[numberQuestion];
+    // const { score } = getState();
+    const getScoreStorage = JSON.parse(localStorage.getItem('score'));
 
     clearInterval(this.cronometro);
+
     this.setState({
       numberQuestion: numberQuestion + 1,
       question: select,
@@ -60,6 +65,12 @@ class Game extends Component {
 
       ]),
       correctQuestion: select.correct_answer,
+
+      score: getScoreStorage,
+    });
+    this.removeBorder();
+    console.log(`valor score ${getScoreStorage}`);
+
       isDisabled: false,
       seconds: 30,
     }, this.setInterval());
@@ -68,7 +79,6 @@ class Game extends Component {
     // tem que voltar o disabled pra false - ok
     // resetar o second pra 30 - ok
     // startar um novo interval - ok
-
   };
 
  montarPrimeiraPergunta= () => {
@@ -114,26 +124,64 @@ class Game extends Component {
     return test;
   };
 
-
-  addBorder = () => {
+  addBorder = ({ target }) => {
     const correctQuestion = document.querySelector('.correct-question');
     const incorrectQuestion = document.querySelectorAll('.incorrect-question');
-    console.log('add');
+
     correctQuestion.classList.add('correct');
     incorrectQuestion.forEach((el) => el.classList.add('incorrect'));
-
+    this.calculateScore(target.classList[1]);
   };
 
 
   removeBorder = () => {
     const correctQuestion = document.querySelector('.correct-question');
     const incorrectQuestion = document.querySelectorAll('.incorrect-question');
-    console.log('remove');
+
     correctQuestion.classList.remove('correct');
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
 
   };
 
+
+  // funcao para calcular a pontuacao
+  // 10 + (timer * dificuldade)
+  // hard: 3, medium: 2, easy: 1
+  calculateScore = (classQuestion) => {
+    const { score, question, timer, numberQuestion } = this.state;
+    let scorePoints = 0;
+    const TEN = 10;
+    const EASY = 1;
+    const MEDIUM = 2;
+    const HARD = 3;
+
+    if (classQuestion === 'correct') {
+      if (question.difficulty === 'hard') {
+        scorePoints = Number(TEN + (timer[numberQuestion] * HARD));
+      } if (question.difficulty === 'medium') {
+        scorePoints = Number(TEN + (timer[numberQuestion] * MEDIUM));
+      } if (question.difficulty === 'easy') {
+        scorePoints = Number(TEN + (timer[numberQuestion] * EASY));
+      }
+
+      return this.setState(({
+        score: score + scorePoints,
+      }), this.saveScore(scorePoints));
+    }
+  }
+
+  // salva o score no storage
+  saveScore = (score) => {
+    const { dispatch } = this.props;
+
+    const saveScoreToStorage = (scorePoints) => {
+      localStorage.setItem('score', scorePoints);
+    };
+    console.log(score);
+
+    saveScoreToStorage(score);
+    dispatch(addScore(score));
+  }
 
   // Função para randomizar array
   randomArray(arr) {
@@ -145,10 +193,9 @@ class Game extends Component {
   }
 
   render() {
-
     console.log(this.props);
     // const { apiResult } = this.state;
-    const { question, answer, seconds, isDisabled } = this.state;
+    const { question, answer, seconds, isDisabled, score } = this.state;
     return (
       <div>
         <HeaderGame />
@@ -186,15 +233,17 @@ class Game extends Component {
   }
 }
 
+
 const mapStateToProps = (state) => ({
   token: state.token,
   time: state.time,
 });
 
 Game.propTypes = {
-  token: string.isRequired,
   dispatch: func.isRequired,
+  token: string.isRequired,
   // time: number.isRequired,
 };
+
 
 export default connect(mapStateToProps, null)(Game);

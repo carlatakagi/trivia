@@ -25,7 +25,7 @@ class HeaderGame extends Component {
 
   render() {
     const { hash } = this.state;
-    const { name } = this.props;
+    const { name/* , score */ } = this.props;
 
     return (
       <header>
@@ -35,8 +35,11 @@ class HeaderGame extends Component {
           data-testid="header-profile-picture"
         />
         <p data-testid="header-player-name">{name}</p>
-        <p data-testid="header-score">0</p>
-        {/* alterar placar dinamicamente */}
+        <p data-testid="header-score">
+          0
+          {/* { `Pontuação: ${score}` } */}
+
+        </p>
       </header>
     );
   }
@@ -46,11 +49,13 @@ class HeaderGame extends Component {
 const mapStateToProps = (state) => ({
   email: state.players.player.email,
   name: state.players.player.name,
+  score: state.players.player.score,
 });
 
 HeaderGame.propTypes = {
   email: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  /* score: PropTypes.number.isRequired, */
 };
 
 export default connect(mapStateToProps, null)(HeaderGame);
