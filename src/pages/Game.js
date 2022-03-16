@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
-import { func, string, shape } from 'prop-types';
+
+import  from 'prop-types';
+
+import PropTypes, { func, string, shape } from 'prop-types';
+
 import { connect } from 'react-redux';
 import HeaderGame from '../components/HeaderGame';
 import requestQuestion from '../services/requestQuestion';
 import requestToken from '../services/requestToken';
 import addTokens from '../redux/actions/token';
+import { addScore } from '../redux/actions/player';
+import Button from '../components/Button';
+
 
 class Game extends Component {
   state = {
@@ -13,12 +20,14 @@ class Game extends Component {
     question: [],
     correctQuestion: [],
     answer: [],
+    score: 0,
     seconds: 30,
     isDisabled: false,
+    nextDisabled: false,
   };
 
   async componentDidMount() {
-    await this.getQuestion(); 
+    await this.getQuestion();
     await this.setInterval();
     await this.montarPrimeiraPergunta();
   }
@@ -45,22 +54,28 @@ class Game extends Component {
 
   nextQuestion = () => {
     const { apiResult, numberQuestion } = this.state;
+    const { history } = this.props;
     const select = apiResult[numberQuestion];
+    const getScoreStorage = JSON.stringify(localStorage.getItem('score'));
     clearInterval(this.cronometro);
-    this.setState({
-      numberQuestion: numberQuestion + 1,
-      question: select,
-      answer: this.randomArray([
-        ...select.incorrect_answers,
-        select.correct_answer,
-      ]),
-      correctQuestion: select.correct_answer,
-      isDisabled: false,
-      seconds: 30,
-    }, this.setInterval());
-    console.log(apiResult);
-
-    this.removeBorder();
+    const NUMBER = 4;
+    if (numberQuestion > NUMBER) {
+      history.push('/feedback');
+    } else {
+      this.setState({
+        numberQuestion: numberQuestion + 1,
+        question: select,
+        answer: this.randomArray([
+          ...select.incorrect_answers,
+          select.correct_answer,
+        ]),
+        correctQuestion: select.correct_answer,
+        score: +getScoreStorage,
+        isDisabled: false,
+        seconds: 30,
+      }, this.setInterval());
+      this.removeBorder();
+    }
   };
 
  montarPrimeiraPergunta= () => {
@@ -71,7 +86,8 @@ class Game extends Component {
        ...select.incorrect_answers,
        select.correct_answer,
      ]),
-     correctQuestion: select.correct_answer });
+     correctQuestion: select.correct_answer,
+     numberQuestion: numberQuestion + 1 });
  }
 
   getQuestion = async () => {
@@ -105,79 +121,109 @@ class Game extends Component {
     return test;
   };
 
-  addBorder = () => {
+  addBorder = ({ target }) => {
     const correctQuestion = document.querySelector('.correct-question');
     const incorrectQuestion = document.querySelectorAll('.incorrect-question');
-    console.log('add');
+
     correctQuestion.classList.add('correct');
     incorrectQuestion.forEach((el) => el.classList.add('incorrect'));
+    this.calculateScore(target.classList[1]);
+    this.setState({ nextDisabled: true });
   };
 
   removeBorder = () => {
     const correctQuestion = document.querySelector('.correct-question');
     const incorrectQuestion = document.querySelectorAll('.incorrect-question');
-    console.log('remove');
+
     correctQuestion.classList.remove('correct');
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
   };
+  // funcao para calcular a pontuacao
+  // 10 + (timer * dificuldade)
+  // hard: 3, medium: 2, easy: 1
+  calculateScore = (classQuestion) => {
+    const { score, question, seconds } = this.state;
+    let scorePoints = 0;
+    const TEN = 10;
+    const EASY = 1;
+    const MEDIUM = 2;
+    const HARD = 3;
 
-   pageFeedback = () => {
-     const { history } = this.props;
-     history.push('/feedback');
-   }
+    if (classQuestion === 'correct') {
+      if (question.difficulty === 'hard') {
+        scorePoints = Number(TEN + (seconds * HARD));
+      } if (question.difficulty === 'medium') {
+        scorePoints = Number(TEN + (seconds * MEDIUM));
+      } if (question.difficulty === 'easy') {
+        scorePoints = Number(TEN + (seconds * EASY));
+      }
 
-   // Função para randomizar array
-   randomArray(arr) {
-     for (let i = arr.length - 1; i > 0; i -= 1) {
-       const j = Math.floor(Math.random() * (i + 2));
-       [arr[i], arr[j]] = [arr[j], arr[i]];
-     }
-     return arr;
-   }
+      return this.setState(({
+        score: score + scorePoints,
+      }), this.saveScore(scorePoints));
+    }
+  }
 
-   render() {
-     // console.log(this.props);
-     // const { apiResult } = this.state;
-     const { question, answer, seconds, isDisabled } = this.state;
-     return (
-       <div>
-         <HeaderGame />
-         <h2 data-testid="question-category">{question.category}</h2>
-         <h3 data-testid="question-text">{question.question}</h3>
-         <span data-testid="answer-options">
-           {answer.map((item, index) => (
-             <button
-               key={ index }
-               type="button"
-               data-testid={ this.correctQuestion(item) }
-               className={ this.classQuestion(item) }
-               onClick={ this.addBorder }
-               disabled={ isDisabled }
-             >
-               {item}
-             </button>
-           ))}
-         </span>
-         <button type="button" onClick={ this.nextQuestion }>
-           {' '}
-           Next
-           {' '}
-         </button>
-         <div>
-           <h3>{seconds}</h3>
-           <div>
-             <button
-               type="button"
-               onClick={ this.pageFeedback }
-             >
-               FeedBack
-             </button>
-           </div>
-         </div>
-       </div>
-     );
-   }
+  // salva o score no storage
+  saveScore = (score) => {
+    const { dispatch } = this.props;
+
+    const saveScoreToStorage = (scorePoints) => {
+      localStorage.setItem('score', scorePoints);
+    };
+
+    saveScoreToStorage(score);
+    dispatch(addScore(score));
+  }
+
+  // Função para randomizar array
+  randomArray(arr) {
+    for (let i = arr.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 2));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  render() {
+    const { question, answer, seconds, isDisabled, score, nextDisabled } = this.state;
+    return (
+      <div>
+        <HeaderGame score={ score } />
+        <h2 data-testid="question-category">{question.category}</h2>
+
+        <h3 data-testid="question-text">{question.question}</h3>
+        <span data-testid="answer-options">
+          {answer.map((item, index) => (
+            <button
+              key={ index }
+              type="button"
+              data-testid={ this.correctQuestion(item) }
+              className={ this.classQuestion(item) }
+              onClick={ this.addBorder }
+              disabled={ isDisabled }
+            >
+              {item}
+            </button>
+          ))}
+        </span>
+        {nextDisabled && <Button nextQuestion={ this.nextQuestion } />}
+        <div>
+          <h3>{seconds}</h3>
+        </div>
+
+      </div>
+    );
+  }
 }
+
+Game.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+  token: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 const mapStateToProps = (state) => ({
   token: state.token,
@@ -192,5 +238,4 @@ Game.propTypes = {
   }).isRequired,
   // time: number.isRequired,
 };
-
 export default connect(mapStateToProps, null)(Game);

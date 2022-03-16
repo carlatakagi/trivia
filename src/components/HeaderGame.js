@@ -16,7 +16,6 @@ class HeaderGame extends Component {
   // npm install crypto-js
   converteMd5ToHash = () => {
     const { email } = this.props;
-    console.log(email);
     const convertedEmail = md5(email).toString();
     this.setState({
       hash: convertedEmail,
@@ -26,7 +25,7 @@ class HeaderGame extends Component {
 
   render() {
     const { hash } = this.state;
-    const { name } = this.props;
+    const { name, score } = this.props;
 
     return (
       <header>
@@ -36,8 +35,7 @@ class HeaderGame extends Component {
           data-testid="header-profile-picture"
         />
         <p data-testid="header-player-name">{name}</p>
-        <p data-testid="header-score">0</p>
-        {/* alterar placar dinamicamente */}
+        <p data-testid="header-score">{!score ? '0' : score}</p>
       </header>
     );
   }
@@ -45,13 +43,15 @@ class HeaderGame extends Component {
 
 // ler o estado do Redux, neste caso o nome do jogador e o email para ser utilizado como hash
 const mapStateToProps = (state) => ({
-  email: state.players.player.email,
-  name: state.players.player.name,
+  email: state.player.email,
+  name: state.player.name,
+  score: state.player.score,
 });
 
 HeaderGame.propTypes = {
   email: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  score: PropTypes.number.isRequired,
 };
 
 export default connect(mapStateToProps, null)(HeaderGame);

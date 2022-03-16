@@ -1,10 +1,8 @@
 const INITIAL_STATE = {
-  player: {
-    name: '',
-    assertions: '',
-    score: '',
-    gravatarEmail: '',
-  },
+  name: '',
+  assertions: '',
+  score: 0,
+  gravatarEmail: '',
 };
 
 const player = (state = INITIAL_STATE, action) => {
@@ -12,7 +10,13 @@ const player = (state = INITIAL_STATE, action) => {
   case 'USER_PLAYER':
     return {
       ...state,
-      player: action.payload,
+      name: action.payload.name,
+      email: action.payload.email,
+    };
+  case 'SCORE_PLAYER':
+    return {
+      ...state,
+      score: action.payload,
     };
   default:
     return state;

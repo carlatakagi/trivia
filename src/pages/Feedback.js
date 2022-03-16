@@ -35,6 +35,7 @@ feedbackMessenger = () => {
     return (
       <>
         <HeaderGame />
+
         {/* <buttonBackLogin dataTestid="btn-play-again" /> */}
         <div>{feedBack}</div>
         <button
@@ -44,6 +45,7 @@ feedbackMessenger = () => {
         >
           Play Again!
         </button>
+
       </>
     );
   }
