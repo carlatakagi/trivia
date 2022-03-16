@@ -5,6 +5,7 @@ import HeaderGame from '../components/HeaderGame';
 import requestQuestion from '../services/requestQuestion';
 import requestToken from '../services/requestToken';
 import addTokens from '../redux/actions/token';
+// import actionTimer from '../redux/actions/timer';
 
 class Game extends Component {
   state = {
@@ -13,24 +14,73 @@ class Game extends Component {
     question: [],
     correctQuestion: [],
     answer: [],
-  }
+    seconds: 30,
+    isDisabled: false,
+  };
 
   async componentDidMount() {
     await this.getQuestion();
-    await this.nextQuestion();
+    // await this.nextQuestion();
+    await this.setInterval();
+    await this.montarPrimeiraPergunta();
   }
+
+  componentDidUpdate() {
+    const TIME_LIMIT = 0;
+    const { seconds, isDisabled } = this.state;
+    if (seconds === TIME_LIMIT && !isDisabled) {
+      this.disabledButton();
+    }
+
+  }
+
+   disabledButton = () => {
+     clearInterval(this.cronometro);
+     this.setState({ isDisabled: true });
+   }
+
+  setInterval = () => {
+    const ONE_SECOND = 1000;
+    this.cronometro = setInterval(() => {
+      this.setState((prevState) => ({ seconds: prevState.seconds - 1 }));
+    }, ONE_SECOND);
+  };
 
   nextQuestion = () => {
     const { apiResult, numberQuestion } = this.state;
     const select = apiResult[numberQuestion];
+
+    clearInterval(this.cronometro);
     this.setState({
       numberQuestion: numberQuestion + 1,
       question: select,
-      answer: this.randomArray([...select.incorrect_answers, select.correct_answer]),
+      answer: this.randomArray([
+        ...select.incorrect_answers,
+        select.correct_answer,
+
+      ]),
       correctQuestion: select.correct_answer,
-    });
+      isDisabled: false,
+      seconds: 30,
+    }, this.setInterval());
+    // dispatch(actionTimer())
     this.removeBorder();
+    // tem que voltar o disabled pra false - ok
+    // resetar o second pra 30 - ok
+    // startar um novo interval - ok
+
   };
+
+ montarPrimeiraPergunta= () => {
+   const { apiResult, numberQuestion } = this.state;
+   const select = apiResult[numberQuestion];
+   this.setState({ question: select,
+     answer: this.randomArray([
+       ...select.incorrect_answers,
+       select.correct_answer,
+     ]),
+     correctQuestion: select.correct_answer });
+ }
 
   getQuestion = async () => {
     const { token, dispatch } = this.props;
@@ -46,6 +96,7 @@ class Game extends Component {
     }
 
     this.setState({ apiResult: responseQuestion.results });
+
   };
 
   correctQuestion = (item) => {
@@ -54,15 +105,15 @@ class Game extends Component {
       ? 'correct-answer'
       : `wrong-answer-${numberQuestion}`;
     return test;
-  }
+    // chmar a função que desabilita o botão aqui.
+  };
 
   classQuestion = (item) => {
     const { correctQuestion } = this.state;
-    const test = item === correctQuestion
-      ? 'correct-question'
-      : 'incorrect-question';
+    const test = item === correctQuestion ? 'correct-question' : 'incorrect-question';
     return test;
   };
+
 
   addBorder = () => {
     const correctQuestion = document.querySelector('.correct-question');
@@ -70,7 +121,9 @@ class Game extends Component {
     console.log('add');
     correctQuestion.classList.add('correct');
     incorrectQuestion.forEach((el) => el.classList.add('incorrect'));
-  }
+
+  };
+
 
   removeBorder = () => {
     const correctQuestion = document.querySelector('.correct-question');
@@ -78,7 +131,9 @@ class Game extends Component {
     console.log('remove');
     correctQuestion.classList.remove('correct');
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
-  }
+
+  };
+
 
   // Função para randomizar array
   randomArray(arr) {
@@ -90,11 +145,15 @@ class Game extends Component {
   }
 
   render() {
-    const { question, answer } = this.state;
+
+    console.log(this.props);
+    // const { apiResult } = this.state;
+    const { question, answer, seconds, isDisabled } = this.state;
     return (
       <div>
         <HeaderGame />
-        <h2 data-testid="question-category">{ question.category }</h2>
+        <h2 data-testid="question-category">{question.category}</h2>
+
         <h3 data-testid="question-text">{question.question}</h3>
         <span data-testid="answer-options">
           {answer.map((item, index) => (
@@ -104,12 +163,24 @@ class Game extends Component {
               data-testid={ this.correctQuestion(item) }
               className={ this.classQuestion(item) }
               onClick={ this.addBorder }
+
+              disabled={ isDisabled }
+
             >
               {item}
             </button>
           ))}
         </span>
-        <button type="button" onClick={ this.nextQuestion }> Next </button>
+
+        <button type="button" onClick={ this.nextQuestion }>
+          {' '}
+          Next
+          {' '}
+        </button>
+        <div>
+          <h3>{seconds}</h3>
+        </div>
+
       </div>
     );
   }
@@ -117,11 +188,13 @@ class Game extends Component {
 
 const mapStateToProps = (state) => ({
   token: state.token,
+  time: state.time,
 });
 
 Game.propTypes = {
   token: string.isRequired,
   dispatch: func.isRequired,
+  // time: number.isRequired,
 };
 
 export default connect(mapStateToProps, null)(Game);
