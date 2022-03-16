@@ -6,9 +6,22 @@ import HeaderGame from '../components/HeaderGame';
 
 class Feedback extends Component {
 state={
-  ranking1: '',
-  ranking2: '',
-  ranking3: '',
+  feedBack: '',
+}
+
+componentDidMount() {
+  this.feedbackMessenger();
+}
+
+feedbackMessenger = () => {
+  const { assertion } = this.props;
+  const NUMBER_LIMIT = 3;
+  if (assertion < NUMBER_LIMIT) {
+    this.setState({ feedBack: 'Could be better...' });
+  }
+  if (assertion >= NUMBER_LIMIT) {
+    this.setState({ feedBack: 'Well Done!' });
+  }
 }
 
   handleClick = () => {
@@ -18,12 +31,12 @@ state={
   };
 
   render() {
-    console.log(this.props);
+    const { feedBack } = this.state;
     return (
       <>
         <HeaderGame />
         {/* <buttonBackLogin dataTestid="btn-play-again" /> */}
-
+        <div>{feedBack}</div>
         <button
           type="button"
           data-testid="btn-play-again"
@@ -35,23 +48,16 @@ state={
     );
   }
 }
+// desconstruir o state pra não ficar tão grande, tem como?
+const mapStateToProps = (state) => ({
+  assertion: state.players.player.assertions,
+});
+
 Feedback.propTypes = {
+  assertion: PropTypes.string.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
 };
 
-export default connect()(Feedback);
-// 13. Crie a mensagem de feedback para ser exibida a pessoa usuária
-// PRIORIDADE 1 - A tela de feedback deve exibir uma mensagem relacionada ao desempenho da pessoa que jogou
-
-// Observações técnicas
-
-// A mensagem deve ser "Could be better..." caso a pessoa acerte menos de 3 perguntas
-// A mensagem deve ser "Well Done!" caso a pessoa acerte 3 perguntas ou mais
-// O elemento da mensagem de feedback deve possuir o atributo data-testid com o valor feedback-text
-// O que será avaliado
-
-// Será validado se ao acertar menos de 3 perguntas a mensagem de feedback é "Could be better..."
-// Será validado se ao acertar 3 perguntas a mensagem de feedback é "Well Done!"
-// Será validado se ao acertar mais de 3 perguntas a mensagem de feedback é "Well Done!"
+export default connect(mapStateToProps)(Feedback);

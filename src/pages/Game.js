@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { func, string } from 'prop-types';
+import { func, string, shape } from 'prop-types';
 import { connect } from 'react-redux';
 import HeaderGame from '../components/HeaderGame';
 import requestQuestion from '../services/requestQuestion';
 import requestToken from '../services/requestToken';
 import addTokens from '../redux/actions/token';
-// import actionTimer from '../redux/actions/timer';
 
 class Game extends Component {
   state = {
@@ -19,8 +18,7 @@ class Game extends Component {
   };
 
   async componentDidMount() {
-    await this.getQuestion();
-    // await this.nextQuestion();
+    await this.getQuestion(); 
     await this.setInterval();
     await this.montarPrimeiraPergunta();
   }
@@ -33,10 +31,10 @@ class Game extends Component {
     }
   }
 
-   disabledButton = () => {
-     clearInterval(this.cronometro);
-     this.setState({ isDisabled: true });
-   }
+  disabledButton = () => {
+    clearInterval(this.cronometro);
+    this.setState({ isDisabled: true });
+  }
 
   setInterval = () => {
     const ONE_SECOND = 1000;
@@ -55,17 +53,14 @@ class Game extends Component {
       answer: this.randomArray([
         ...select.incorrect_answers,
         select.correct_answer,
-
       ]),
       correctQuestion: select.correct_answer,
       isDisabled: false,
       seconds: 30,
     }, this.setInterval());
-    // dispatch(actionTimer())
+    console.log(apiResult);
+
     this.removeBorder();
-    // tem que voltar o disabled pra false - ok
-    // resetar o second pra 30 - ok
-    // startar um novo interval - ok
   };
 
  montarPrimeiraPergunta= () => {
@@ -126,49 +121,62 @@ class Game extends Component {
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
   };
 
-  // Função para randomizar array
-  randomArray(arr) {
-    for (let i = arr.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * (i + 2));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
+   pageFeedback = () => {
+     const { history } = this.props;
+     history.push('/feedback');
+   }
 
-  render() {
-    console.log(this.props);
-    // const { apiResult } = this.state;
-    const { question, answer, seconds, isDisabled } = this.state;
-    return (
-      <div>
-        <HeaderGame />
-        <h2 data-testid="question-category">{question.category}</h2>
-        <h3 data-testid="question-text">{question.question}</h3>
-        <span data-testid="answer-options">
-          {answer.map((item, index) => (
-            <button
-              key={ index }
-              type="button"
-              data-testid={ this.correctQuestion(item) }
-              className={ this.classQuestion(item) }
-              onClick={ this.addBorder }
-              disabled={ isDisabled }
-            >
-              {item}
-            </button>
-          ))}
-        </span>
-        <button type="button" onClick={ this.nextQuestion }>
-          {' '}
-          Next
-          {' '}
-        </button>
-        <div>
-          <h3>{seconds}</h3>
-        </div>
-      </div>
-    );
-  }
+   // Função para randomizar array
+   randomArray(arr) {
+     for (let i = arr.length - 1; i > 0; i -= 1) {
+       const j = Math.floor(Math.random() * (i + 2));
+       [arr[i], arr[j]] = [arr[j], arr[i]];
+     }
+     return arr;
+   }
+
+   render() {
+     // console.log(this.props);
+     // const { apiResult } = this.state;
+     const { question, answer, seconds, isDisabled } = this.state;
+     return (
+       <div>
+         <HeaderGame />
+         <h2 data-testid="question-category">{question.category}</h2>
+         <h3 data-testid="question-text">{question.question}</h3>
+         <span data-testid="answer-options">
+           {answer.map((item, index) => (
+             <button
+               key={ index }
+               type="button"
+               data-testid={ this.correctQuestion(item) }
+               className={ this.classQuestion(item) }
+               onClick={ this.addBorder }
+               disabled={ isDisabled }
+             >
+               {item}
+             </button>
+           ))}
+         </span>
+         <button type="button" onClick={ this.nextQuestion }>
+           {' '}
+           Next
+           {' '}
+         </button>
+         <div>
+           <h3>{seconds}</h3>
+           <div>
+             <button
+               type="button"
+               onClick={ this.pageFeedback }
+             >
+               FeedBack
+             </button>
+           </div>
+         </div>
+       </div>
+     );
+   }
 }
 
 const mapStateToProps = (state) => ({
@@ -179,6 +187,9 @@ const mapStateToProps = (state) => ({
 Game.propTypes = {
   token: string.isRequired,
   dispatch: func.isRequired,
+  history: shape({
+    push: func.isRequired,
+  }).isRequired,
   // time: number.isRequired,
 };
 
