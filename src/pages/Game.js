@@ -20,19 +20,24 @@ class Game extends Component {
 
   async componentDidMount() {
     await this.getQuestion();
-    await this.nextQuestion();
+    this.nextQuestion();
   }
 
   nextQuestion = () => {
     const { apiResult, numberQuestion } = this.state;
     const select = apiResult[numberQuestion];
+    // const { score } = getState();
+    const getScoreStorage = localStorage.getItem('score');
+
     this.setState({
       numberQuestion: numberQuestion + 1,
       question: select,
       answer: this.randomArray([...select.incorrect_answers, select.correct_answer]),
       correctQuestion: select.correct_answer,
+      score: getScoreStorage,
     });
     this.removeBorder();
+    console.log(`valor score ${getScoreStorage}`);
   };
 
   getQuestion = async () => {
@@ -79,7 +84,7 @@ class Game extends Component {
   removeBorder = () => {
     const correctQuestion = document.querySelector('.correct-question');
     const incorrectQuestion = document.querySelectorAll('.incorrect-question');
-    console.log('remove');
+
     correctQuestion.classList.remove('correct');
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
   }
@@ -88,42 +93,36 @@ class Game extends Component {
   // 10 + (timer * dificuldade)
   // hard: 3, medium: 2, easy: 1
   calculateScore = (classQuestion) => {
-    const { score = 0, question, timer = 0 } = this.state;
-
+    const { question, timer = 0 } = this.state;
+    let scorePoints = 0;
     const TEN = 10;
     const EASY = 1;
     const MEDIUM = 2;
     const HARD = 3;
 
-    console.log(question.difficulty);
-    console.log(classQuestion);
-
-    if (classQuestion === 'correct-question') {
+    if (classQuestion === 'correct') {
       if (question.difficulty === 'hard') {
-        const scorePoints = Number(TEN + (timer * HARD));
-        return Number(scorePoints);
+        scorePoints = Number(TEN + (timer * HARD));
       } if (question.difficulty === 'medium') {
-        const scorePoints = Number(TEN + (timer * MEDIUM));
-        return Number(scorePoints);
+        scorePoints = Number(TEN + (timer * MEDIUM));
+      } if (question.difficulty === 'easy') {
+        scorePoints = Number(TEN + (timer * EASY));
       }
-      const scorePoints = Number(TEN + (timer * EASY));
-      return Number(scorePoints);
+
+      // sobrescreve o valor - nao passa no teste (teste invoca a funcao getState)
+      return this.setState((previousState, currentState) => ({
+        ...previousState,
+        score: previousState.score + currentState.scorePoints,
+      }), this.saveScore(scorePoints));
     }
-
-    this.setState((previousState, propState) => ({
-      ...previousState,
-      score: Number(previousState.score) + Number(propState.scorePoints),
-    }), this.saveScore());
-
-    console.log(score);
   }
 
   // salva o score no storage
-  saveScore = () => {
+  saveScore = (score) => {
     const { dispatch } = this.props;
-    const { score } = this.state;
-    const saveScoreToStorage = (scorePlayer) => {
-      localStorage.setItem('score', scorePlayer);
+
+    const saveScoreToStorage = (scorePoints) => {
+      localStorage.setItem('score', scorePoints);
     };
     console.log(score);
 
