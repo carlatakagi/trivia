@@ -18,7 +18,7 @@ const player = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       player: { ...state.player,
-        score: state.score + action.payload },
+        score: action.payload },
     };
   default:
     return state;

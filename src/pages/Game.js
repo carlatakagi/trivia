@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { func, string, number } from 'prop-types';
+import { func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import HeaderGame from '../components/HeaderGame';
 import requestQuestion from '../services/requestQuestion';
@@ -15,7 +15,7 @@ class Game extends Component {
     correctQuestion: [],
     answer: [],
     score: 0,
-    timer: 0,
+    timer: [],
   }
 
   async componentDidMount() {
@@ -27,7 +27,7 @@ class Game extends Component {
     const { apiResult, numberQuestion } = this.state;
     const select = apiResult[numberQuestion];
     // const { score } = getState();
-    const getScoreStorage = localStorage.getItem('score');
+    const getScoreStorage = JSON.parse(localStorage.getItem('score'));
 
     this.setState({
       numberQuestion: numberQuestion + 1,
@@ -93,7 +93,7 @@ class Game extends Component {
   // 10 + (timer * dificuldade)
   // hard: 3, medium: 2, easy: 1
   calculateScore = (classQuestion) => {
-    const { question, timer = 0 } = this.state;
+    const { score, question, timer, numberQuestion } = this.state;
     let scorePoints = 0;
     const TEN = 10;
     const EASY = 1;
@@ -102,17 +102,15 @@ class Game extends Component {
 
     if (classQuestion === 'correct') {
       if (question.difficulty === 'hard') {
-        scorePoints = Number(TEN + (timer * HARD));
+        scorePoints = Number(TEN + (timer[numberQuestion] * HARD));
       } if (question.difficulty === 'medium') {
-        scorePoints = Number(TEN + (timer * MEDIUM));
+        scorePoints = Number(TEN + (timer[numberQuestion] * MEDIUM));
       } if (question.difficulty === 'easy') {
-        scorePoints = Number(TEN + (timer * EASY));
+        scorePoints = Number(TEN + (timer[numberQuestion] * EASY));
       }
 
-      // sobrescreve o valor - nao passa no teste (teste invoca a funcao getState)
-      return this.setState((previousState, currentState) => ({
-        ...previousState,
-        score: previousState.score + currentState.scorePoints,
+      return this.setState(({
+        score: score + scorePoints,
       }), this.saveScore(scorePoints));
     }
   }
@@ -140,8 +138,9 @@ class Game extends Component {
   }
 
   render() {
-    const { question, answer } = this.state;
+    const { question, answer, score } = this.state;
     console.log(question.correct_answer);
+    console.log(score);
     return (
       <div>
         <HeaderGame />
@@ -169,7 +168,7 @@ class Game extends Component {
 Game.propTypes = {
   dispatch: func.isRequired,
   token: string.isRequired,
-  scorePoints: number.isRequired,
+  // scorePoints: number.isRequired,
 };
 
 const mapStateToProps = (state) => ({
