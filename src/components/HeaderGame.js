@@ -19,6 +19,7 @@ class HeaderGame extends Component {
     const convertedEmail = md5(email).toString();
     this.setState({
       hash: convertedEmail,
+
     });
   }
 

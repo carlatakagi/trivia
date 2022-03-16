@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+
+import  from 'prop-types';
+
+import PropTypes, { func, string, shape } from 'prop-types';
+
 import { connect } from 'react-redux';
 import HeaderGame from '../components/HeaderGame';
 import requestQuestion from '../services/requestQuestion';
@@ -7,6 +11,7 @@ import requestToken from '../services/requestToken';
 import addTokens from '../redux/actions/token';
 import { addScore } from '../redux/actions/player';
 import Button from '../components/Button';
+
 
 class Game extends Component {
   state = {
@@ -35,10 +40,10 @@ class Game extends Component {
     }
   }
 
-   disabledButton = () => {
-     clearInterval(this.cronometro);
-     this.setState({ isDisabled: true });
-   }
+  disabledButton = () => {
+    clearInterval(this.cronometro);
+    this.setState({ isDisabled: true });
+  }
 
   setInterval = () => {
     const ONE_SECOND = 1000;
@@ -133,7 +138,6 @@ class Game extends Component {
     correctQuestion.classList.remove('correct');
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
   };
-
   // funcao para calcular a pontuacao
   // 10 + (timer * dificuldade)
   // hard: 3, medium: 2, easy: 1
@@ -226,4 +230,12 @@ const mapStateToProps = (state) => ({
   time: state.time,
 });
 
+Game.propTypes = {
+  token: string.isRequired,
+  dispatch: func.isRequired,
+  history: shape({
+    push: func.isRequired,
+  }).isRequired,
+  // time: number.isRequired,
+};
 export default connect(mapStateToProps, null)(Game);
