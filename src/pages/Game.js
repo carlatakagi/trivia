@@ -31,6 +31,7 @@ class Game extends Component {
     if (seconds === TIME_LIMIT && !isDisabled) {
       this.disabledButton();
     }
+
   }
 
    disabledButton = () => {
@@ -48,6 +49,7 @@ class Game extends Component {
   nextQuestion = () => {
     const { apiResult, numberQuestion } = this.state;
     const select = apiResult[numberQuestion];
+
     clearInterval(this.cronometro);
     this.setState({
       numberQuestion: numberQuestion + 1,
@@ -66,6 +68,7 @@ class Game extends Component {
     // tem que voltar o disabled pra false - ok
     // resetar o second pra 30 - ok
     // startar um novo interval - ok
+
   };
 
  montarPrimeiraPergunta= () => {
@@ -93,6 +96,7 @@ class Game extends Component {
     }
 
     this.setState({ apiResult: responseQuestion.results });
+
   };
 
   correctQuestion = (item) => {
@@ -110,13 +114,16 @@ class Game extends Component {
     return test;
   };
 
+
   addBorder = () => {
     const correctQuestion = document.querySelector('.correct-question');
     const incorrectQuestion = document.querySelectorAll('.incorrect-question');
     console.log('add');
     correctQuestion.classList.add('correct');
     incorrectQuestion.forEach((el) => el.classList.add('incorrect'));
+
   };
+
 
   removeBorder = () => {
     const correctQuestion = document.querySelector('.correct-question');
@@ -124,7 +131,9 @@ class Game extends Component {
     console.log('remove');
     correctQuestion.classList.remove('correct');
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
+
   };
+
 
   // Função para randomizar array
   randomArray(arr) {
@@ -136,6 +145,7 @@ class Game extends Component {
   }
 
   render() {
+
     console.log(this.props);
     // const { apiResult } = this.state;
     const { question, answer, seconds, isDisabled } = this.state;
@@ -143,6 +153,7 @@ class Game extends Component {
       <div>
         <HeaderGame />
         <h2 data-testid="question-category">{question.category}</h2>
+
         <h3 data-testid="question-text">{question.question}</h3>
         <span data-testid="answer-options">
           {answer.map((item, index) => (
@@ -152,12 +163,15 @@ class Game extends Component {
               data-testid={ this.correctQuestion(item) }
               className={ this.classQuestion(item) }
               onClick={ this.addBorder }
+
               disabled={ isDisabled }
+
             >
               {item}
             </button>
           ))}
         </span>
+
         <button type="button" onClick={ this.nextQuestion }>
           {' '}
           Next
@@ -166,6 +180,7 @@ class Game extends Component {
         <div>
           <h3>{seconds}</h3>
         </div>
+
       </div>
     );
   }
