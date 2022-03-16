@@ -8,7 +8,7 @@ import requestToken from '../services/requestToken';
 
 import logo from '../trivia.png';
 import addTokens from '../redux/actions/token';
-import addplayers from '../redux/actions/players';
+import addplayers from '../redux/actions/player';
 
 class Login extends Component {
   state = {

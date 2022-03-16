@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import players from './player';
+import player from './player';
 import token from './token';
 import reducerTimer from './reducerTimer';
 
-const rootReducer = combineReducers({ players, token, reducerTimer });
+const rootReducer = combineReducers({ player, token, reducerTimer });
 
 export default rootReducer;
