@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { AiFillSetting } from 'react-icons/ai';
 import PropTypes from 'prop-types';
+
+import { AiFillSetting } from 'react-icons/ai';
 import { BsPlayBtn } from 'react-icons/bs';
 import requestToken from '../services/requestToken';
+
 import logo from '../trivia.png';
 import addTokens from '../redux/actions/token';
 import addplayers from '../redux/actions/players';
