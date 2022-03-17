@@ -52,7 +52,7 @@ feedbackMessenger = () => {
 }
 // desconstruir o state pra não ficar tão grande, tem como?
 const mapStateToProps = (state) => ({
-  assertion: state.players.player.assertions,
+  assertion: state.player.assertions,
 });
 
 Feedback.propTypes = {
