@@ -48,7 +48,7 @@ feedbackMessenger = () => {
         <button
           type="button"
           data-testid="btn-play-again"
-          onClick={this.handleClick}
+          onClick={ this.handleClick }
         >
           Play Again!
         </button>
