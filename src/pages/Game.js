@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-
-import  from 'prop-types';
-
 import PropTypes, { func, string, shape } from 'prop-types';
 
 import { connect } from 'react-redux';
@@ -11,7 +8,6 @@ import requestToken from '../services/requestToken';
 import addTokens from '../redux/actions/token';
 import { addScore } from '../redux/actions/player';
 import Button from '../components/Button';
-
 
 class Game extends Component {
   state = {
@@ -29,7 +25,7 @@ class Game extends Component {
   async componentDidMount() {
     await this.getQuestion();
     await this.setInterval();
-    await this.montarPrimeiraPergunta();
+    await this.renderFristQuestion();
   }
 
   componentDidUpdate() {
@@ -78,17 +74,17 @@ class Game extends Component {
     }
   };
 
- montarPrimeiraPergunta= () => {
-   const { apiResult, numberQuestion } = this.state;
-   const select = apiResult[numberQuestion];
-   this.setState({ question: select,
-     answer: this.randomArray([
-       ...select.incorrect_answers,
-       select.correct_answer,
-     ]),
-     correctQuestion: select.correct_answer,
-     numberQuestion: numberQuestion + 1 });
- }
+renderFristQuestion = () => {
+  const { apiResult, numberQuestion } = this.state;
+  const select = apiResult[numberQuestion];
+  this.setState({ question: select,
+    answer: this.randomArray([
+      ...select.incorrect_answers,
+      select.correct_answer,
+    ]),
+    correctQuestion: select.correct_answer,
+    numberQuestion: numberQuestion + 1 });
+}
 
   getQuestion = async () => {
     const { token, dispatch } = this.props;
@@ -138,6 +134,7 @@ class Game extends Component {
     correctQuestion.classList.remove('correct');
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
   };
+
   // funcao para calcular a pontuacao
   // 10 + (timer * dificuldade)
   // hard: 3, medium: 2, easy: 1

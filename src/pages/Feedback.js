@@ -14,12 +14,12 @@ componentDidMount() {
 }
 
 feedbackMessenger = () => {
-  const { assertion } = this.props;
+  const { assertions } = this.props;
   const NUMBER_LIMIT = 3;
-  if (assertion < NUMBER_LIMIT) {
+  if (assertions < NUMBER_LIMIT) {
     this.setState({ feedBack: 'Could be better...' });
   }
-  if (assertion >= NUMBER_LIMIT) {
+  if (assertions >= NUMBER_LIMIT) {
     this.setState({ feedBack: 'Well Done!' });
   }
 }
@@ -31,13 +31,20 @@ feedbackMessenger = () => {
   };
 
   render() {
+    const { assertions, score } = this.props;
     const { feedBack } = this.state;
     return (
       <>
         <HeaderGame />
+        <h2>Correct answers</h2>
+        <div data-testid="feedback-total-question">{assertions}</div>
+        <h2>Maximum score</h2>
+        <div data-testid="feedback-total-score">
+          { score }
+        </div>
 
         {/* <buttonBackLogin dataTestid="btn-play-again" /> */}
-        <div>{feedBack}</div>
+        <div data-testid="feedback-text">{feedBack}</div>
         <button
           type="button"
           data-testid="btn-play-again"
@@ -45,18 +52,19 @@ feedbackMessenger = () => {
         >
           Play Again!
         </button>
-
       </>
     );
   }
 }
 // desconstruir o state pra não ficar tão grande, tem como?
 const mapStateToProps = (state) => ({
-  assertion: state.players.player.assertions,
+  assertions: state.player.assertions,
+  score: state.player.score,
 });
 
 Feedback.propTypes = {
-  assertion: PropTypes.string.isRequired,
+  score: PropTypes.string.isRequired,
+  assertions: PropTypes.number.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
