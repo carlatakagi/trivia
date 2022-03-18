@@ -24,7 +24,7 @@ class Game extends Component {
   async componentDidMount() {
     await this.getQuestion();
     await this.setInterval();
-    await this.montarPrimeiraPergunta();
+    await this.renderFristQuestion();
   }
 
   componentDidUpdate() {
@@ -73,17 +73,17 @@ class Game extends Component {
     }
   };
 
- montarPrimeiraPergunta= () => {
-   const { apiResult, numberQuestion } = this.state;
-   const select = apiResult[numberQuestion];
-   this.setState({ question: select,
-     answer: this.randomArray([
-       ...select.incorrect_answers,
-       select.correct_answer,
-     ]),
-     correctQuestion: select.correct_answer,
-     numberQuestion: numberQuestion + 1 });
- }
+renderFristQuestion = () => {
+  const { apiResult, numberQuestion } = this.state;
+  const select = apiResult[numberQuestion];
+  this.setState({ question: select,
+    answer: this.randomArray([
+      ...select.incorrect_answers,
+      select.correct_answer,
+    ]),
+    correctQuestion: select.correct_answer,
+    numberQuestion: numberQuestion + 1 });
+}
 
   getQuestion = async () => {
     const { token, dispatch } = this.props;
