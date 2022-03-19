@@ -184,34 +184,31 @@ renderFristQuestion = () => {
   render() {
     const { question, answer, seconds, isDisabled, score, nextDisabled } = this.state;
     return (
-      <div>
+      <div className="div-page-game">
         <HeaderGame score={ score } />
-        <h2 data-testid="question-category">{question.category}</h2>
+        <div className="mount-questions">
+          <h2 data-testid="question-category">{question.category}</h2>
+          <h3 data-testid="question-text">{question.question}</h3>
 
-        <h3 data-testid="question-text">{question.question}</h3>
-        <span data-testid="answer-options">
-          {answer.map((item, index) => (
-            <button
-              key={ index }
-              type="button"
-              data-testid={ this.correctQuestion(item) }
-              className={ this.classQuestion(item) }
-              onClick={ this.addBorder }
-              disabled={ isDisabled }
-            >
-              {item}
-            </button>
-          ))}
-        </span>
-        {nextDisabled && <Button
-          dataTestid="btn-next"
-          name="Next"
-          nextQuestion={ this.nextQuestion }
-        />}
-        <div>
-          <h3>{seconds}</h3>
+          <span className="div-questions" data-testid="answer-options">
+            {answer.map((item, index) => (
+              <button
+                key={ index }
+                type="button"
+                data-testid={ this.correctQuestion(item) }
+                className={ this.classQuestion(item) }
+                onClick={ this.addBorder }
+                disabled={ isDisabled }
+              >
+                {item}
+              </button>
+            ))}
+          </span>
+          {nextDisabled && <Button nextQuestion={ this.nextQuestion } />}
+          <div>
+            <h3>{seconds}</h3>
+          </div>
         </div>
-
       </div>
     );
   }

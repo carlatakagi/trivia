@@ -68,7 +68,7 @@ class Login extends Component {
         <header className="App-header">
           <img src={ logo } className="App-logo" alt="logo" />
 
-          <form>
+          <form className="form-login">
             <label htmlFor="name">
               Name
               <input
