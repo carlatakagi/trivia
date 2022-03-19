@@ -204,7 +204,11 @@ renderFristQuestion = () => {
               </button>
             ))}
           </span>
-          {nextDisabled && <Button nextQuestion={ this.nextQuestion } />}
+          {nextDisabled && <Button
+            dataTestid="btn-next"
+            name="Next"
+            nextQuestion={ this.nextQuestion }
+          />}
           <div>
             <h3>{seconds}</h3>
           </div>
