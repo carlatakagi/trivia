@@ -3,15 +3,15 @@ import React, { Component } from 'react';
 
 class Button extends Component {
   render() {
-    const { nextQuestion } = this.props;
+    const { nextQuestion, name, dataTestid } = this.props;
     return (
       <div>
         <button
-          data-testid="btn-next"
+          data-testid={ dataTestid }
           type="button"
           onClick={ nextQuestion }
         >
-          Next
+          {name}
         </button>
       </div>
     );
@@ -20,6 +20,8 @@ class Button extends Component {
 
 Button.propTypes = {
   nextQuestion: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  dataTestid: PropTypes.string.isRequired,
 };
 
 export default Button;

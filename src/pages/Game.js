@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes, { func, string, shape } from 'prop-types';
-
 import { connect } from 'react-redux';
 import HeaderGame from '../components/HeaderGame';
 import requestQuestion from '../services/requestQuestion';
