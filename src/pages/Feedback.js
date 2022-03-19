@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import HeaderGame from '../components/HeaderGame';
+import Button from '../components/Button';
 // import buttonBackLogin from '../components/buttonBackLogin';
 
 class Feedback extends Component {
@@ -30,6 +31,11 @@ feedbackMessenger = () => {
     history.push('/');
   };
 
+  goPageRaking = () => {
+    const { history } = this.props;
+    history.push('/ranking');
+  };
+
   render() {
     const { assertions, score } = this.props;
     const { feedBack } = this.state;
@@ -52,6 +58,11 @@ feedbackMessenger = () => {
         >
           Play Again!
         </button>
+        <Button
+          dataTestid="btn-ranking"
+          name="Raking"
+          nextQuestion={ this.goPageRaking }
+        />
       </>
     );
   }
