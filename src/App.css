@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  text-align: left;
 }
 
 .App-logo {
@@ -24,7 +24,9 @@
 
 .App-header {
   align-items: center;
-  background-color: #282c34;
+  background-image: url('./img/telaLogin.png');
+  background-repeat: no-repeat;
+  background-size: cover;
   color: white;
   display: flex;
   flex-direction: column;
