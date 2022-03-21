@@ -90,7 +90,6 @@ renderFristQuestion = () => {
     let responseQuestion = await requestQuestion(token);
     const NUMBER = 3;
 
-    // o erro era que nao existe a chave results e o retorno era undefined
     if (responseQuestion.response_code === NUMBER) {
       const responseToken = await requestToken();
 
@@ -107,7 +106,7 @@ renderFristQuestion = () => {
       ? 'correct-answer'
       : `wrong-answer-${numberQuestion}`;
     return test;
-    // chmar a função que desabilita o botão aqui.
+    // chamar a função que desabilita o botão aqui.
   };
 
   classQuestion = (item) => {
@@ -134,9 +133,6 @@ renderFristQuestion = () => {
     incorrectQuestion.forEach((el) => el.classList.remove('incorrect'));
   };
 
-  // funcao para calcular a pontuacao
-  // 10 + (timer * dificuldade)
-  // hard: 3, medium: 2, easy: 1
   calculateScore = (classQuestion) => {
     const { score, question, seconds } = this.state;
     let scorePoints = 0;
@@ -160,7 +156,6 @@ renderFristQuestion = () => {
     }
   }
 
-  // salva o score no storage
   saveScore = (score) => {
     const { dispatch } = this.props;
 
@@ -185,10 +180,12 @@ renderFristQuestion = () => {
     const { question, answer, seconds, isDisabled, score, nextDisabled } = this.state;
     return (
       <div className="div-page-game">
-        <HeaderGame score={ score } />
+        <div className="header-game">
+          <HeaderGame score={ score } />
+        </div>
         <div className="mount-questions">
           <h2 data-testid="question-category">{question.category}</h2>
-          <h3 data-testid="question-text">{question.question}</h3>
+          <h3 data-testid="question-text" dangerouslySetInnerHTML={ { __html: question.question } } />
 
           <span className="div-questions" data-testid="answer-options">
             {answer.map((item, index) => (
@@ -204,8 +201,8 @@ renderFristQuestion = () => {
               </button>
             ))}
           </span>
-          {nextDisabled && <Button nextQuestion={ this.nextQuestion } />}
-          <div>
+          {nextDisabled && <Button name="Next" nextQuestion={ this.nextQuestion } />}
+          <div className="contador">
             <h3>{seconds}</h3>
           </div>
         </div>
@@ -233,6 +230,5 @@ Game.propTypes = {
   history: shape({
     push: func.isRequired,
   }).isRequired,
-  // time: number.isRequired,
 };
 export default connect(mapStateToProps, null)(Game);

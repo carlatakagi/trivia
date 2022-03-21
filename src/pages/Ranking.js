@@ -12,20 +12,22 @@ class Ranking extends Component {
   render() {
     return (
       <div className="ranking-container">
-        <h2
-          className="ranking-title"
-          data-testid="ranking-title"
-        >
-          Ranking
-        </h2>
+        <div className="mount-ranking">
+          <h2
+            className="ranking-title"
+            data-testid="ranking-title"
+          >
+            Ranking
+          </h2>
 
-        <button
-          type="submit"
-          data-testid="btn-go-home"
-          onClick={ this.handleClick }
-        >
-          Voltar ao início
-        </button>
+          <button
+            type="submit"
+            data-testid="btn-go-home"
+            onClick={ this.handleClick }
+          >
+            Voltar ao início
+          </button>
+        </div>
       </div>
     );
   }

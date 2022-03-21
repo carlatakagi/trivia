@@ -69,7 +69,7 @@ class Login extends Component {
           <img src={ logo } className="App-logo" alt="logo" />
 
           <form className="form-login">
-            <label htmlFor="name">
+            <label className="label-login" htmlFor="name">
               Name
               <input
                 type="text"
@@ -77,10 +77,11 @@ class Login extends Component {
                 onChange={ this.handleChange }
                 value={ name }
                 name="name"
+                placeholder="Your Name"
               />
             </label>
 
-            <label htmlFor="email">
+            <label className="label-login" htmlFor="email">
               Email
               <input
                 type="email"
@@ -88,9 +89,9 @@ class Login extends Component {
                 onChange={ this.handleChange }
                 value={ email }
                 name="email"
+                placeholder="Your e-mail"
               />
             </label>
-
             <button
               type="submit"
               data-testid="btn-play"
