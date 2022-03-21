@@ -213,13 +213,16 @@ box-shadow: 0 0 0 30px #a2e9ff inset;
 
  .mount-feedback {
   display: flex;
-  max-width: 553px;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-content: space-between;
-  padding-left: 27%;
-  padding-top: 12%;
-  color:#ededed
+  width: 658px;
+    align-content: stretch;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    border-radius: 25px;
+    background-color: rgba(52, 119, 185, 0.8);
+    margin-top: 370px;
+    margin-left: 203px;
  }
  .button-feedback {
   display: flex;
@@ -274,4 +277,17 @@ min-width: 235px
 }
  .mount-ranking {
    padding: 340px;
+    display: flex;
+  margin-left: 0px;
+  width: 700px;
+  align-content: stretch;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  border-radius: 25px;
+  background-color:rgba(52, 119, 185, 0.4);
+ }
+ .mount-ranking img {
+   size: 100px;
  }

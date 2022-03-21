@@ -36,18 +36,16 @@ class Ranking extends Component {
     return (
       <div className="ranking-container">
         <div className="mount-ranking">
-          <h2
-            className="ranking-title"
-            data-testid="ranking-title"
-          >
-            Ranking
-          </h2>
-          <img
-            src={ `https://www.gravatar.com/avatar/${email}` }
-            alt="profile"
-          />
-          <p>{name}</p>
-          <p>{score}</p>
+          <div className="mount-ranking-title">
+            <h2 className="ranking-title" data-testid="ranking-title">
+              Ranking
+            </h2>
+          </div>
+          <div className="mount-ranking-person">
+            <img src={ `https://www.gravatar.com/avatar/${email}` } alt="profile" />
+            <p>{name}</p>
+            <p>{score}</p>
+          </div>
           <button
             type="submit"
             data-testid="btn-go-home"

@@ -206,7 +206,7 @@ renderFristQuestion = () => {
             name="Next"
             nextQuestion={ this.nextQuestion }
           />}
-          <div>
+          <div className="contador">
             <h3>{seconds}</h3>
           </div>
         </div>
