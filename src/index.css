@@ -271,5 +271,32 @@ min-width: 235px
   color:rgb(211, 223, 238)
 }
  .mount-ranking {
-   padding: 340px;
+  display: flex;
+  margin-left: 0px;
+  width: 500px;
+  align-content: stretch;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  border-radius: 25px;
+  background-color:rgba(146, 172, 197, 0.6);
+  margin-top: 300px;
+  padding:20px;
+  
+  
+ }
+ .mount-ranking-person {
+   display: flex;
+   flex-direction: row;
+   padding: 20px
+  
+ }
+ .mount-ranking-person p {
+   margin: 10px;
+   padding: 10px;
+   color:#ededed;
+   font-style:oblique;
+   font-size: 30px;
+   font-weight: bold;
  }
