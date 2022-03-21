@@ -12,6 +12,13 @@ class HeaderGame extends Component {
     this.converteMd5ToHash();
   }
 
+  saveLocalStorage = () => {
+    const { hash } = this.state;
+    const { name } = this.props;
+    localStorage.setItem('email', hash);
+    localStorage.setItem('name', name);
+  }
+
   // converter md5 https://br.gravatar.com/site/implement/hash/
   // npm install crypto-js
   converteMd5ToHash = () => {
@@ -19,8 +26,7 @@ class HeaderGame extends Component {
     const convertedEmail = md5(email).toString();
     this.setState({
       hash: convertedEmail,
-
-    });
+    }, this.saveLocalStorage());
   }
 
   render() {

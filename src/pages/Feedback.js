@@ -29,6 +29,8 @@ feedbackMessenger = () => {
     console.log('cliquei');
     const { history } = this.props;
     history.push('/');
+    // localStorage.removeItem('score');
+    // localStorage.removeItem('gravatarEmail');
   };
 
   goPageRaking = () => {
