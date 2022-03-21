@@ -40,30 +40,45 @@ feedbackMessenger = () => {
     const { assertions, score } = this.props;
     const { feedBack } = this.state;
     return (
-      <>
-        <HeaderGame />
-        <h2>Correct answers</h2>
-        <div data-testid="feedback-total-question">{assertions}</div>
-        <h2>Maximum score</h2>
-        <div data-testid="feedback-total-score">
-          { score }
-        </div>
+      <div className="page-feedback">
+        <div className="mount-feedback">
+          <HeaderGame />
+          <h2>Correct answers</h2>
+          <div
+            className="result-feedback"
+            data-testid="feedback-total-question"
+          >
+            {assertions}
+          </div>
+          <h2>Maximum score</h2>
+          <div className="result-feedback" data-testid="feedback-total-score">
+            {score}
+          </div>
 
-        {/* <buttonBackLogin dataTestid="btn-play-again" /> */}
-        <div data-testid="feedback-text">{feedBack}</div>
-        <button
-          type="button"
-          data-testid="btn-play-again"
-          onClick={ this.handleClick }
-        >
-          Play Again!
-        </button>
-        <Button
-          dataTestid="btn-ranking"
-          name="Raking"
-          nextQuestion={ this.goPageRaking }
-        />
-      </>
+          {/* <buttonBackLogin dataTestid="btn-play-again" /> */}
+          <div className="feedback-text" data-testid="feedback-text">
+            {feedBack}
+          </div>
+          <div className="button-feedback">
+            <div className="button-play">
+              <button
+                type="button"
+                data-testid="btn-play-again"
+                onClick={ this.handleClick }
+              >
+                Play Again!
+              </button>
+            </div>
+            <div nameClass="button-">
+              <Button
+                dataTestid="btn-ranking"
+                name="Raking"
+                nextQuestion={ this.goPageRaking }
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 }

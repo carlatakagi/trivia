@@ -28,14 +28,18 @@ class HeaderGame extends Component {
     const { name, score } = this.props;
 
     return (
-      <header>
+      <header className="component-header-game">
         <img
           src={ `https://www.gravatar.com/avatar/${hash}` }
           alt="profile"
           data-testid="header-profile-picture"
+          className="img-header"
         />
-        <p data-testid="header-player-name">{name}</p>
-        <p data-testid="header-score">{!score ? '0' : score}</p>
+        <div>
+
+          <p data-testid="header-player-name">{name}</p>
+          <p data-testid="header-score">{!score ? '0' : score}</p>
+        </div>
       </header>
     );
   }
