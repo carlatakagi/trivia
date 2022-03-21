@@ -157,6 +157,8 @@ box-shadow: 0 0 0 30px #a2e9ff inset;
  margin-left: 0px;
 }
 .mount-questions h3 {
+  display: flex;
+  align-items: center;
   font-size: 30px;
   margin: 0px 0px;
 }
@@ -210,14 +212,14 @@ box-shadow: 0 0 0 30px #a2e9ff inset;
   }
 
  .mount-feedback {
-   display: flex;
-   max-width: 553px;
-   flex-direction: column;
-   flex-wrap: wrap;
-   align-content: space-between;
-  padding-left: 575px;
-  padding-top: 300px;
-   color:#ededed
+  display: flex;
+  max-width: 553px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: space-between;
+  padding-left: 27%;
+  padding-top: 12%;
+  color:#ededed
  }
  .button-feedback {
   display: flex;
