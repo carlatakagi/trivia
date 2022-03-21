@@ -70,6 +70,7 @@ class Login extends Component {
 
           <form className="form-login">
             <label className="label-login" htmlFor="name">
+              Name
               <input
                 type="text"
                 data-testid="input-player-name"
@@ -81,6 +82,7 @@ class Login extends Component {
             </label>
 
             <label className="label-login" htmlFor="email">
+              Email
               <input
                 type="email"
                 data-testid="input-gravatar-email"
