@@ -1,5 +1,5 @@
 <h1 align="center">
-     🪐<a href="#" alt="blog"> Trivia </a>🪐
+     🃏<a href="#" alt="blog"> Trivia </a>🃏
 </h1>
 <h2 align="center">
 	🚀 Concluído 🚀
@@ -62,6 +62,7 @@ As seguintes ferramentas foram usadas na construção do projeto:
 -   **[HTML](https://developer.mozilla.org/pt-BR/docs/Web/HTML)**
 -   **[JavaScript](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)**
 -   **[React](https://pt-br.reactjs.org/)**
+-   **[Redux](https://redux.js.org/)**
 
 ---
 ## 🚀 Como executar o projeto
